@@ -1,6 +1,8 @@
 import socket
 import threading
 
+# 192.168.1.72
+
 class PeerToPeerChat:
     def __init__(self, own_ip, own_port):
         self.own_ip = own_ip
@@ -14,12 +16,12 @@ class PeerToPeerChat:
             destination_ip, destination_port = self.neighbours.get(destination_name, (None, None))
             if destination_ip and destination_port:
                 # Verifica si la conexión con el vecino está activa
-                # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                #     s.settimeout(1)  # Establece un tiempo de espera de 1 segundo
-                #     result = s.connect_ex((destination_ip, destination_port))
-                    result = self.check_neighbours_connection(destination_ip, destination_port)
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.settimeout(1)  # Establece un tiempo de espera de 1 segundo
+                    result = s.connect_ex((destination_ip, destination_port))
+                    # result = self.check_neighbours_connection(destination_ip, destination_port)
                     if result == 0:
-                        self.server_socket.send(message.encode())
+                        s.send(message.encode())
                         print(f"Mensaje enviado a {destination_name}: {message}")
                     else:
                         print(f"Error: No hay conexión con {destination_name}")
@@ -34,10 +36,7 @@ class PeerToPeerChat:
             try:
                 message = client_socket.recv(1024).decode()
                 if message:
-                    for name, (ip, port) in self.neighbours.items():
-                        if ip == client_address[0]:
-                            send_name = name
-                    print(f"\nMensaje recibido de {name} {client_address[0]}:{client_address[1]}: {message}")
+                    print(f"\nMensaje recibido de {client_address[0]}:{client_address[1]}: {message}")
                     
                     # Verifica si el mensaje ya se ha recibido antes
                     # if message not in self.received_messages:
@@ -48,17 +47,18 @@ class PeerToPeerChat:
                 break
 
     def start_listening(self):
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.own_ip, self.own_port))
-        self.server_socket.listen()
-        print(f"Servidor escuchando en {self.own_ip}:{self.own_port}")
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+            server_socket.bind((self.own_ip, self.own_port))
+            server_socket.listen()
+            print(f"Servidor escuchando en {self.own_ip}:{self.own_port}")
 
-        while self.is_running:
-            client_socket, client_address = self.server_socket.accept()
-            thread = threading.Thread(target=self.handle_client, args=(client_socket, client_address))
-            thread.start()
+            while self.is_running:
+                client_socket, client_address = server_socket.accept()
+                thread = threading.Thread(target=self.handle_client, args=(client_socket, client_address))
+                thread.start()
+                print(f'Conexion establecida con {client_address}')
 
-        self.server_socket.close()  # Cerramos el socket del servidor al salir del bucle
+        server_socket.close()  # Cerramos el socket del servidor al salir del bucle
 
     def add_neighbour(self, neighbour_name, neighbour_ip, neighbour_port):
         self.neighbours[neighbour_name] = (neighbour_ip, neighbour_port)
@@ -77,6 +77,15 @@ class PeerToPeerChat:
         self.is_running = False  # Establecemos la bandera en False para detener el servidor
         print('Servidor Apagado')
 
+    def list_neighbours(self):
+        print("--- Lista de Vecinos ---")
+        for name, (ip, port) in self.neighbours.items():
+            result = self.check_neighbours_connection(ip, port)
+            if result:
+                print(f"{name}: {ip}:{port} - En linea")
+            else:
+                print(f"{name}: {ip}:{port} - Sin conexion")
+
     def check_neighbours_connection(self, ip, port):    
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(1)  # Establece un tiempo de espera de 1 segundo
@@ -86,14 +95,6 @@ class PeerToPeerChat:
             else:
                 return False
 
-    def list_neighbours(self):
-        print("--- Lista de Vecinos ---")
-        for name, (ip, port) in self.neighbours.items():
-            result = self.check_neighbours_connection(ip, port)
-            if result:
-                print(f"{name}: {ip}:{port} - En linea")
-            else:
-                print(f"{name}: {ip}:{port} - Sin conexion")
 
     def scan_local_network(self, start_port, end_port):
         # own_ip = socket.gethostbyname(socket.gethostname())
@@ -159,6 +160,9 @@ if __name__ == "__main__":
 
             case "3":
                 peer.list_neighbours()
+                # print("--- Lista de Vecinos ---")
+                # for name, (ip, port) in peer.neighbours.items():
+                #         print(f"{name}: {ip}:{port}")
 
             case "4":
                 while True:
