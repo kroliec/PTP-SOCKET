@@ -1,7 +1,6 @@
 import socket
 import threading
 
-# 192.168.1.72
 
 class PeerToPeerChat:
     def __init__(self, own_ip, own_port):
