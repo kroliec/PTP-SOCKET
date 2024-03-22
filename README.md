@@ -5,7 +5,7 @@
 - Juan Felipe Salazar Muñoz.
 
 ## Descripción
-PeerToPeerChat es una aplicación de chat punto a punto que permite a los usuarios enviar mensajes entre ellos utilizando conexiones TCP directas.
+PeerToPeerChat es una aplicación de chat punto a punto que permite a los usuarios enviar mensajes entre ellos utilizando conexiones TCP directas..
 
 ## Funcionalidades
 - **Agregar vecinos:** Permite a los usuarios agregar los nombres, direcciones IP y puertos de otros usuarios para establecer conexiones de chat.
