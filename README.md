@@ -1,6 +1,6 @@
 
 # PeerToPeerChat
-- Sting Orlando Buritica.
+- Sting Orlando Búritica.
 - Bryan Cardona Valencia.
 - Juan Felipe Salazar Muñoz.
 
