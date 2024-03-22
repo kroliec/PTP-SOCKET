@@ -1,8 +1,8 @@
 
 # PeerToPeerChat
-- Sting Orlando Buritica.
-- Bryan Cardona Valencia.
-- Juan Felipe Salazar Muñoz.
+Sting Orlando Buritica.
+Bryan Cardona Valencia.
+Juan Felipe Salazar Muñoz.
 
 ## Descripción
 PeerToPeerChat es una aplicación de chat punto a punto que permite a los usuarios enviar mensajes entre ellos utilizando conexiones TCP directas.
