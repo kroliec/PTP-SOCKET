@@ -40,6 +40,7 @@ Generar un par de claves RSA: Puedes usar la biblioteca cryptography de Python p
 python
 
 
+```
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
@@ -65,11 +66,12 @@ class PeerToPeerChat:
 
     def load_public_key(self, pem_data):
         self.peer_public_key = serialization.load_pem_public_key(pem_data, backend=default_backend())
+```
         
 Cifrar y descifrar mensajes: Una vez que tengas las claves generadas, puedes usarlas para cifrar y descifrar mensajes. Aquí te muestro cómo puedes modificar el método send_message para cifrar los mensajes antes de enviarlos y el método handle_client para descifrar los mensajes recibidos:
 python
 
-
+```
 class PeerToPeerChat:
 
     # Resto del código...
@@ -116,5 +118,6 @@ class PeerToPeerChat:
             except ConnectionResetError:
                 print(f"Conexión perdida con {client_address}")
                 break
+```
                 
 Estas modificaciones te permitirán cifrar los mensajes antes de enviarlos y descifrar los mensajes recibidos utilizando RSA. Además, asegúrate de cargar la clave pública del vecino antes de enviar mensajes. Esto es solo un ejemplo básico, y puedes ajustarlo según tus necesidades específicas.
